@@ -263,9 +263,14 @@ export class UI {
   private newGame() {
     this.selectedRow = null;
     this.selectedCol = null;
+    this.paused = false;
+    this.$grid.classList.remove("paused");
+    this.$pauseBtn.textContent = "⏸️";
+    this.$pauseBtn.setAttribute("aria-label", "Pausar partida");
+    this.$pauseBtn.setAttribute("aria-pressed", "false");
     this.game = new Game();
     this.seconds = 0;
-    this.$timer.textContent = '00:00';
+    this.$timer.textContent = "00:00";
     this.startTimer();
     this.render();
   }
