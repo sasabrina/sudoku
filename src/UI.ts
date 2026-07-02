@@ -265,14 +265,13 @@ export class UI {
     this.selectedCol = null;
     this.game = new Game();
     this.seconds = 0;
+    this.$timer.textContent = '00:00';
     this.startTimer();
     this.render();
   }
 
   private startTimer() {
     this.stopTimer();
-    this.seconds = 0;
-    this.$timer.textContent = "00:00";
     this.timerInterval = setInterval(() => {
       this.seconds++;
       const m = String(Math.floor(this.seconds / 60)).padStart(2, "0");
