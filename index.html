@@ -12,8 +12,14 @@
       <h1>Sudoku</h1>
 
       <div id="status-bar">
-        <span id="errors-display" aria-live="polite" aria-label="Errores: 0 de 3"></span>
-        <span id="timer" aria-live="off" aria-label="Tiempo transcurrido">00:00</span>
+        <span
+          id="errors-display"
+          aria-live="polite"
+          aria-label="Errores: 0 de 3"
+        ></span>
+        <span id="timer" aria-live="off" aria-label="Tiempo transcurrido"
+          >00:00</span
+        >
       </div>
 
       <div
@@ -24,7 +30,8 @@
       ></div>
 
       <p id="grid-instructions" class="sr-only">
-        Usá las flechas para navegar entre celdas. Presioná un número del 1 al 9 para ingresar un valor.
+        Usá las flechas para navegar entre celdas. Presioná un número del 1 al 9
+        para ingresar un valor.
       </p>
 
       <div id="numpad" role="group" aria-label="Teclado numérico">
@@ -40,14 +47,31 @@
       </div>
 
       <div id="controls">
-        <button id="btn-undo" aria-label="Deshacer último movimiento">Deshacer</button>
-        <button id="btn-pause" aria-label="Pausar partida" aria-pressed="false">⏸</button>
-        <button id="btn-new-game" aria-label="Iniciar nueva partida">Nueva partida</button>
+        <button id="btn-undo" aria-label="Deshacer último movimiento">
+          Deshacer
+        </button>
+        <button id="btn-pause" aria-label="Pausar partida" aria-pressed="false">
+          ⏸️
+        </button>
+        <button id="btn-new-game" aria-label="Iniciar nueva partida">
+          Nueva partida
+        </button>
       </div>
 
-      <div aria-live="assertive" aria-atomic="true" id="announcer" class="sr-only"></div>
+      <div
+        aria-live="assertive"
+        aria-atomic="true"
+        id="announcer"
+        class="sr-only"
+      ></div>
 
-      <div id="overlay" class="hidden" role="dialog" aria-modal="true" aria-labelledby="overlay-title">
+      <div
+        id="overlay"
+        class="hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="overlay-title"
+      >
         <div id="overlay-content">
           <h2 id="overlay-title"></h2>
           <p id="overlay-msg"></p>
@@ -55,6 +79,18 @@
         </div>
       </div>
     </div>
+
+    <footer>
+      <span>Hecho con 🩷 y 🧠 por Sabrina Alvarez</span>
+      <span>·</span>
+      <a
+        href="https://github.com/sasabrina/sudoku"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        GitHub
+      </a>
+    </footer>
 
     <script type="module" src="/src/main.ts"></script>
   </body>

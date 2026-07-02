@@ -1,24 +1,26 @@
 // ─── Variables ───────────────────────────────────────────────────────────────
-$bg:          #080808;
-$fg:          #f0ede6;
-$muted:       #6b6b6b;
-$border:      #1e1e1e;
-$border-box:  #2e2e2e;
-$accent:      #c8b89a;
-$accent-dim:  rgba(200, 184, 154, 0.12);
-$accent-mid:  rgba(200, 184, 154, 0.25);
-$error:       #e05c5c;
-$error-dim:   rgba(224, 92, 92, 0.12);
-$highlight:   rgba(240, 237, 230, 0.05);
-$selected:    rgba(200, 184, 154, 0.18);
-$same-number: rgba(200, 184, 154, 0.10);
+$bg: #080808;
+$fg: #f0ede6;
+$muted: #6b6b6b;
+$border: #1e1e1e;
+$border-box: #2e2e2e;
+$accent: #c8b89a;
+$accent-dim: rgba(200, 184, 154, 0.12);
+$accent-mid: rgba(200, 184, 154, 0.25);
+$error: #e05c5c;
+$error-dim: rgba(224, 92, 92, 0.12);
+$highlight: rgba(240, 237, 230, 0.05);
+$selected: rgba(200, 184, 154, 0.18);
+$same-number: rgba(200, 184, 154, 0.1);
 
-$font:        'Inter', system-ui, sans-serif;
-$radius:      8px;
-$radius-lg:   14px;
+$font: "Inter", system-ui, sans-serif;
+$radius: 8px;
+$radius-lg: 14px;
 
 // ─── Reset ───────────────────────────────────────────────────────────────────
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -31,9 +33,9 @@ body {
   color: $fg;
   min-height: 100dvh;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 2.5rem 1rem 4rem;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
 }
 
 #app {
@@ -43,6 +45,7 @@ body {
   gap: 1.25rem;
   width: 100%;
   max-width: 420px;
+  padding: 2.5rem 1rem 4rem;
 }
 
 // ─── Header ──────────────────────────────────────────────────────────────────
@@ -95,13 +98,23 @@ h1 {
   border-bottom: 1px solid $border;
   transition: background 0.1s ease;
 
-  &:nth-child(9n)   { border-right: none; }
-  &:nth-child(n+73) { border-bottom: none; }
+  &:nth-child(9n) {
+    border-right: none;
+  }
+  &:nth-child(n + 73) {
+    border-bottom: none;
+  }
 
   // Thick box borders
-  &:nth-child(3n):not(:nth-child(9n))              { border-right: 1.5px solid $border-box; }
-  &:nth-child(n+19):nth-child(-n+27) { border-bottom: 1.5px solid $border-box; }
-  &:nth-child(n+46):nth-child(-n+54) { border-bottom: 1.5px solid $border-box; }
+  &:nth-child(3n):not(:nth-child(9n)) {
+    border-right: 1.5px solid $border-box;
+  }
+  &:nth-child(n + 19):nth-child(-n + 27) {
+    border-bottom: 1.5px solid $border-box;
+  }
+  &:nth-child(n + 46):nth-child(-n + 54) {
+    border-bottom: 1.5px solid $border-box;
+  }
 
   &.given {
     color: $fg;
@@ -152,7 +165,10 @@ h1 {
   border: 1px solid $border-box;
   border-radius: $radius;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
 
   &:hover {
     background: $accent-dim;
@@ -193,7 +209,9 @@ h1 {
     border: 1px solid $border-box;
     border-radius: $radius;
     cursor: pointer;
-    transition: color 0.15s ease, border-color 0.15s ease;
+    transition:
+      color 0.15s ease,
+      border-color 0.15s ease;
 
     &:hover {
       color: $fg;
@@ -213,7 +231,9 @@ h1 {
   justify-content: center;
   z-index: 10;
 
-  &.hidden { display: none; }
+  &.hidden {
+    display: none;
+  }
 }
 
 #overlay-content {
@@ -253,7 +273,9 @@ h1 {
   cursor: pointer;
   transition: opacity 0.15s ease;
 
-  &:hover { opacity: 0.85; }
+  &:hover {
+    opacity: 0.85;
+  }
 }
 
 // ─── Responsive ──────────────────────────────────────────────────────────────
@@ -268,6 +290,28 @@ h1 {
 
   .num-btn {
     border-radius: 6px;
+  }
+}
+
+// ─── Footer ──────────────────────────────────────────────────────────────────
+footer {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  font-size: 0.75rem;
+  color: $muted;
+  padding: 1.5rem 0;
+
+  a {
+    color: $muted;
+    text-decoration: none;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: $accent;
+    }
   }
 }
 
@@ -286,7 +330,9 @@ h1 {
 
 // ─── Accessibility ───────────────────────────────────────────────────────────
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; }
+  * {
+    transition: none !important;
+  }
 }
 
 :focus-visible {
