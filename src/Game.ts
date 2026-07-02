@@ -38,6 +38,14 @@ export class Game {
     const solutionCell = this.solution.grid[row][col];
     const boardCell = this.board.grid[row][col];
 
+    // Toggle: pressing the same number clears the cell
+    if (boardCell.value === value) {
+      this.history.push({ row, col, value: boardCell.value });
+      boardCell.value = 0;
+      boardCell.error = false;
+      return { correct: false, errors: this.errors, status: this.status };
+    }
+
     this.history.push({
       row,
       col,
@@ -50,6 +58,8 @@ export class Game {
       this.status = this.solver.isSolved(this.board) ? "won" : "playing";
     } else {
       isCorrect = false;
+      boardCell.value = value;
+      boardCell.error = true;
       this.errors++;
       this.status = this.errors === ERROR_LIMIT ? "lost" : "playing";
     }
@@ -69,5 +79,6 @@ export class Game {
     const { col, row, value } = lastMove;
 
     this.board.grid[row][col].value = value;
+    this.board.grid[row][col].error = false;
   }
 }
