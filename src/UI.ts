@@ -1,5 +1,5 @@
 import { Game } from './Game';
-import { GRID_SIZE } from './constants';
+import { ERROR_LIMIT, GRID_SIZE } from './constants';
 
 export class UI {
   private game: Game;
@@ -92,10 +92,7 @@ export class UI {
     });
 
     // Errors display
-    const remaining = this.game.errors;
-    const max = 3;
-    this.$errorsDisplay.textContent =
-      '❤️'.repeat(max - remaining) + '🖤'.repeat(remaining);
+    this.$errorsDisplay.textContent = `Errores: ${this.game.errors}/${ERROR_LIMIT}`;
 
     // Disable numpad buttons for completed numbers
     const counts = new Array(10).fill(0);
