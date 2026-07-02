@@ -80,7 +80,6 @@ export class Solver {
       }
     }
 
-    // Mark remaining cells as fixed (given by the puzzle)
     for (let r = 0; r < GRID_SIZE; r++) {
       for (let c = 0; c < GRID_SIZE; c++) {
         if (clone.grid[r][c].value !== 0) {

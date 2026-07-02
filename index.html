@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -12,31 +12,42 @@
       <h1>Sudoku</h1>
 
       <div id="status-bar">
-        <span id="errors-display">❤️❤️❤️</span>
-        <span id="timer">00:00</span>
+        <span id="errors-display" aria-live="polite" aria-label="Errores: 0 de 3"></span>
+        <span id="timer" aria-live="off" aria-label="Tiempo transcurrido">00:00</span>
       </div>
 
-      <div id="grid"></div>
+      <div
+        id="grid"
+        role="grid"
+        aria-label="Tablero de Sudoku"
+        aria-describedby="grid-instructions"
+      ></div>
 
-      <div id="numpad">
-        <button class="num-btn" data-num="1">1</button>
-        <button class="num-btn" data-num="2">2</button>
-        <button class="num-btn" data-num="3">3</button>
-        <button class="num-btn" data-num="4">4</button>
-        <button class="num-btn" data-num="5">5</button>
-        <button class="num-btn" data-num="6">6</button>
-        <button class="num-btn" data-num="7">7</button>
-        <button class="num-btn" data-num="8">8</button>
-        <button class="num-btn" data-num="9">9</button>
+      <p id="grid-instructions" class="sr-only">
+        Usá las flechas para navegar entre celdas. Presioná un número del 1 al 9 para ingresar un valor.
+      </p>
+
+      <div id="numpad" role="group" aria-label="Teclado numérico">
+        <button class="num-btn" data-num="1" aria-label="Ingresar 1">1</button>
+        <button class="num-btn" data-num="2" aria-label="Ingresar 2">2</button>
+        <button class="num-btn" data-num="3" aria-label="Ingresar 3">3</button>
+        <button class="num-btn" data-num="4" aria-label="Ingresar 4">4</button>
+        <button class="num-btn" data-num="5" aria-label="Ingresar 5">5</button>
+        <button class="num-btn" data-num="6" aria-label="Ingresar 6">6</button>
+        <button class="num-btn" data-num="7" aria-label="Ingresar 7">7</button>
+        <button class="num-btn" data-num="8" aria-label="Ingresar 8">8</button>
+        <button class="num-btn" data-num="9" aria-label="Ingresar 9">9</button>
       </div>
 
       <div id="controls">
-        <button id="btn-undo">Deshacer</button>
-        <button id="btn-pause">⏸</button>
-        <button id="btn-new-game">Nueva partida</button>
+        <button id="btn-undo" aria-label="Deshacer último movimiento">Deshacer</button>
+        <button id="btn-pause" aria-label="Pausar partida" aria-pressed="false">⏸</button>
+        <button id="btn-new-game" aria-label="Iniciar nueva partida">Nueva partida</button>
       </div>
 
-      <div id="overlay" class="hidden">
+      <div aria-live="assertive" aria-atomic="true" id="announcer" class="sr-only"></div>
+
+      <div id="overlay" class="hidden" role="dialog" aria-modal="true" aria-labelledby="overlay-title">
         <div id="overlay-content">
           <h2 id="overlay-title"></h2>
           <p id="overlay-msg"></p>

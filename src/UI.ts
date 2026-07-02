@@ -16,6 +16,8 @@ export class UI {
   private $overlayTitle = document.getElementById('overlay-title')!;
   private $overlayMsg = document.getElementById('overlay-msg')!;
   private $overlayBtn = document.getElementById('overlay-btn')!;
+  private $announcer = document.getElementById('announcer')!;
+  private $pauseBtn = document.getElementById('btn-pause')!;
 
   constructor(game: Game) {
     this.game = game;
@@ -39,6 +41,8 @@ export class UI {
         cell.classList.add('cell');
         cell.dataset.row = String(r);
         cell.dataset.col = String(c);
+        cell.setAttribute('role', 'gridcell');
+        cell.setAttribute('tabindex', r === 0 && c === 0 ? '0' : '-1');
         cell.addEventListener('click', () => this.onCellClick(r, c));
         this.$grid.appendChild(cell);
       }
@@ -89,10 +93,21 @@ export class UI {
       }
 
       el.textContent = cell.value !== 0 ? String(cell.value) : '';
+
+      // Keep tabindex in sync with selected cell
+      el.setAttribute('tabindex', r === this.selectedRow && c === this.selectedCol ? '0' : '-1');
+
+      // Describe cell for screen readers
+      const row = r + 1, col = c + 1;
+      const valueDesc = cell.value !== 0 ? `${cell.value}` : 'vacía';
+      const stateDesc = cell.fixed ? ', dada' : cell.error ? ', incorrecta' : '';
+      el.setAttribute('aria-label', `Fila ${row}, columna ${col}: ${valueDesc}${stateDesc}`);
+      el.setAttribute('aria-selected', String(r === this.selectedRow && c === this.selectedCol));
     });
 
     // Errors display
     this.$errorsDisplay.textContent = `Errores: ${this.game.errors}/${ERROR_LIMIT}`;
+    this.$errorsDisplay.setAttribute('aria-label', `Errores: ${this.game.errors} de ${ERROR_LIMIT}`);
 
     // Disable numpad buttons for completed numbers
     const counts = new Array(10).fill(0);
@@ -114,16 +129,18 @@ export class UI {
     if (this.game.status !== 'playing') return;
     this.paused = !this.paused;
 
-    const $pauseBtn = document.getElementById('btn-pause')!;
-
     if (this.paused) {
       this.stopTimer();
       this.$grid.classList.add('paused');
-      $pauseBtn.textContent = '▶';
+      this.$pauseBtn.textContent = '▶';
+      this.$pauseBtn.setAttribute('aria-label', 'Reanudar partida');
+      this.$pauseBtn.setAttribute('aria-pressed', 'true');
     } else {
       this.startTimer();
       this.$grid.classList.remove('paused');
-      $pauseBtn.textContent = '⏸';
+      this.$pauseBtn.textContent = '⏸';
+      this.$pauseBtn.setAttribute('aria-label', 'Pausar partida');
+      this.$pauseBtn.setAttribute('aria-pressed', 'false');
     }
   }
 
@@ -207,10 +224,14 @@ export class UI {
 
     if (result.status === 'won') {
       this.stopTimer();
+      this.announce('¡Ganaste!');
       this.showOverlay('¡Ganaste! 🎉', `Tiempo: ${this.$timer.textContent}`);
     } else if (result.status === 'lost') {
       this.stopTimer();
+      this.announce('Juego terminado. Demasiados errores.');
       this.showOverlay('Game Over 😞', 'Demasiados errores. ¡Intentalo de nuevo!');
+    } else if (!result.correct) {
+      this.announce(`Número incorrecto. Errores: ${result.errors} de ${ERROR_LIMIT}`);
     }
   }
 
@@ -240,6 +261,11 @@ export class UI {
       clearInterval(this.timerInterval);
       this.timerInterval = null;
     }
+  }
+
+  private announce(msg: string) {
+    this.$announcer.textContent = '';
+    requestAnimationFrame(() => { this.$announcer.textContent = msg; });
   }
 
   private showOverlay(title: string, msg: string) {
