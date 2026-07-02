@@ -156,6 +156,19 @@ h1 {
   &:active {
     background: $accent-mid;
   }
+
+  &:disabled,
+  &.completed {
+    opacity: 0.2;
+    cursor: default;
+    border-color: $border;
+
+    &:hover {
+      background: transparent;
+      border-color: $border;
+      color: $fg;
+    }
+  }
 }
 
 // ─── Controls ────────────────────────────────────────────────────────────────

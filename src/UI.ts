@@ -95,6 +95,21 @@ export class UI {
     const max = 3;
     this.$errorsDisplay.textContent =
       '❤️'.repeat(max - remaining) + '🖤'.repeat(remaining);
+
+    // Disable numpad buttons for completed numbers
+    const counts = new Array(10).fill(0);
+    for (let r = 0; r < GRID_SIZE; r++) {
+      for (let c = 0; c < GRID_SIZE; c++) {
+        const v = this.game.board.grid[r][c].value;
+        if (v !== 0) counts[v]++;
+      }
+    }
+    document.querySelectorAll<HTMLButtonElement>('.num-btn').forEach(btn => {
+      const num = Number(btn.dataset.num);
+      const complete = counts[num] >= GRID_SIZE;
+      btn.disabled = complete;
+      btn.classList.toggle('completed', complete);
+    });
   }
 
   private onCellClick(row: number, col: number) {
