@@ -2,7 +2,7 @@
 
 A Sudoku game built with vanilla TypeScript and object-oriented programming, bundled with Vite.
 
-🎮 [Play it here](#) <!-- update with Vercel URL after deploy -->
+🎮 [Play it here](https://sudoku-lake-five.vercel.app/)
 
 ## Features
 
