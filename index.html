@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sudoku</title>
+    <link rel="stylesheet" href="/src/style.scss" />
+  </head>
+  <body>
+    <div id="app">
+      <h1>Sudoku</h1>
+
+      <div id="status-bar">
+        <span id="errors-display">❤️❤️❤️</span>
+        <span id="timer">00:00</span>
+      </div>
+
+      <div id="grid"></div>
+
+      <div id="numpad">
+        <button class="num-btn" data-num="1">1</button>
+        <button class="num-btn" data-num="2">2</button>
+        <button class="num-btn" data-num="3">3</button>
+        <button class="num-btn" data-num="4">4</button>
+        <button class="num-btn" data-num="5">5</button>
+        <button class="num-btn" data-num="6">6</button>
+        <button class="num-btn" data-num="7">7</button>
+        <button class="num-btn" data-num="8">8</button>
+        <button class="num-btn" data-num="9">9</button>
+      </div>
+
+      <div id="controls">
+        <button id="btn-undo">↩ Deshacer</button>
+        <button id="btn-new-game">Nueva partida</button>
+      </div>
+
+      <div id="overlay" class="hidden">
+        <div id="overlay-content">
+          <h2 id="overlay-title"></h2>
+          <p id="overlay-msg"></p>
+          <button id="overlay-btn">Nueva partida</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,216 @@
+import { Game } from './Game';
+import { GRID_SIZE } from './constants';
+
+export class UI {
+  private game: Game;
+  private selectedRow: number | null = null;
+  private selectedCol: number | null = null;
+  private timerInterval: number | null = null;
+  private seconds: number = 0;
+
+  private $grid = document.getElementById('grid')!;
+  private $errorsDisplay = document.getElementById('errors-display')!;
+  private $timer = document.getElementById('timer')!;
+  private $overlay = document.getElementById('overlay')!;
+  private $overlayTitle = document.getElementById('overlay-title')!;
+  private $overlayMsg = document.getElementById('overlay-msg')!;
+  private $overlayBtn = document.getElementById('overlay-btn')!;
+
+  constructor(game: Game) {
+    this.game = game;
+  }
+
+  init() {
+    this.buildGrid();
+    this.bindNumpad();
+    this.bindControls();
+    this.bindKeyboard();
+    this.startTimer();
+    this.render();
+  }
+
+  // Build the 81 cell divs once
+  private buildGrid() {
+    this.$grid.innerHTML = '';
+    for (let r = 0; r < GRID_SIZE; r++) {
+      for (let c = 0; c < GRID_SIZE; c++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.dataset.row = String(r);
+        cell.dataset.col = String(c);
+        cell.addEventListener('click', () => this.onCellClick(r, c));
+        this.$grid.appendChild(cell);
+      }
+    }
+  }
+
+  // Re-render the entire board state
+  render() {
+    const { board } = this.game;
+
+    // Compute highlighted cells (same row, col, box as selected)
+    const highlighted = new Set<string>();
+    if (this.selectedRow !== null && this.selectedCol !== null) {
+      const sr = this.selectedRow;
+      const sc = this.selectedCol;
+      const boxR = Math.floor(sr / 3) * 3;
+      const boxC = Math.floor(sc / 3) * 3;
+      for (let i = 0; i < GRID_SIZE; i++) {
+        highlighted.add(`${sr}-${i}`);
+        highlighted.add(`${i}-${sc}`);
+      }
+      for (let r = boxR; r < boxR + 3; r++) {
+        for (let c = boxC; c < boxC + 3; c++) {
+          highlighted.add(`${r}-${c}`);
+        }
+      }
+    }
+
+    const selectedValue = this.selectedRow !== null && this.selectedCol !== null
+      ? board.grid[this.selectedRow][this.selectedCol].value
+      : 0;
+
+    document.querySelectorAll<HTMLElement>('.cell').forEach(el => {
+      const r = Number(el.dataset.row);
+      const c = Number(el.dataset.col);
+      const cell = board.grid[r][c];
+
+      el.className = 'cell';
+      if (cell.fixed) el.classList.add('given');
+      if (cell.error) el.classList.add('error');
+      if (r === this.selectedRow && c === this.selectedCol) {
+        el.classList.add('selected');
+      } else if (highlighted.has(`${r}-${c}`)) {
+        el.classList.add('highlighted');
+      }
+      if (selectedValue !== 0 && cell.value === selectedValue) {
+        el.classList.add('same-number');
+      }
+
+      el.textContent = cell.value !== 0 ? String(cell.value) : '';
+    });
+
+    // Errors display
+    const remaining = this.game.errors;
+    const max = 3;
+    this.$errorsDisplay.textContent =
+      '❤️'.repeat(max - remaining) + '🖤'.repeat(remaining);
+  }
+
+  private onCellClick(row: number, col: number) {
+    if (this.game.status !== 'playing') return;
+    this.selectedRow = row;
+    this.selectedCol = col;
+    this.render();
+  }
+
+  private bindNumpad() {
+    document.querySelectorAll<HTMLButtonElement>('.num-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.enterNumber(Number(btn.dataset.num));
+      });
+    });
+  }
+
+  private bindControls() {
+    document.getElementById('btn-undo')!.addEventListener('click', () => {
+      this.game.undoMove();
+      this.render();
+    });
+
+    document.getElementById('btn-new-game')!.addEventListener('click', () => {
+      this.newGame();
+    });
+
+    this.$overlayBtn.addEventListener('click', () => {
+      this.$overlay.classList.add('hidden');
+      this.newGame();
+    });
+  }
+
+  private bindKeyboard() {
+    document.addEventListener('keydown', (e) => {
+      if (this.game.status !== 'playing') return;
+
+      if (/^[1-9]$/.test(e.key)) {
+        this.enterNumber(Number(e.key));
+      }
+
+      if (e.key === 'Backspace' || e.key === 'Delete') {
+        this.game.undoMove();
+        this.render();
+      }
+
+      // Arrow key navigation
+      if (this.selectedRow !== null && this.selectedCol !== null) {
+        const moves: Record<string, [number, number]> = {
+          ArrowUp: [-1, 0], ArrowDown: [1, 0],
+          ArrowLeft: [0, -1], ArrowRight: [0, 1],
+        };
+        if (moves[e.key]) {
+          e.preventDefault();
+          const [dr, dc] = moves[e.key];
+          this.selectedRow = Math.max(0, Math.min(8, this.selectedRow + dr));
+          this.selectedCol = Math.max(0, Math.min(8, this.selectedCol + dc));
+          this.render();
+        }
+      }
+    });
+  }
+
+  private enterNumber(num: number) {
+    if (this.selectedRow === null || this.selectedCol === null) return;
+    const cell = this.game.board.grid[this.selectedRow][this.selectedCol];
+    if (cell.fixed) return;
+
+    const result = this.game.makeMove({
+      row: this.selectedRow,
+      col: this.selectedCol,
+      value: num,
+    });
+
+    this.render();
+
+    if (result.status === 'won') {
+      this.stopTimer();
+      this.showOverlay('¡Ganaste! 🎉', `Tiempo: ${this.$timer.textContent}`);
+    } else if (result.status === 'lost') {
+      this.stopTimer();
+      this.showOverlay('Game Over 😞', 'Demasiados errores. ¡Intentalo de nuevo!');
+    }
+  }
+
+  private newGame() {
+    this.selectedRow = null;
+    this.selectedCol = null;
+    this.game = new Game();
+    this.seconds = 0;
+    this.startTimer();
+    this.render();
+  }
+
+  private startTimer() {
+    this.stopTimer();
+    this.seconds = 0;
+    this.$timer.textContent = '00:00';
+    this.timerInterval = setInterval(() => {
+      this.seconds++;
+      const m = String(Math.floor(this.seconds / 60)).padStart(2, '0');
+      const s = String(this.seconds % 60).padStart(2, '0');
+      this.$timer.textContent = `${m}:${s}`;
+    }, 1000);
+  }
+
+  private stopTimer() {
+    if (this.timerInterval !== null) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
+
+  private showOverlay(title: string, msg: string) {
+    this.$overlayTitle.textContent = title;
+    this.$overlayMsg.textContent = msg;
+    this.$overlay.classList.remove('hidden');
+  }
+}

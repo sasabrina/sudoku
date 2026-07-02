@@ -1,0 +1,262 @@
+// ─── Variables ───────────────────────────────────────────────────────────────
+$bg:          #080808;
+$fg:          #f0ede6;
+$muted:       #6b6b6b;
+$border:      #1e1e1e;
+$border-box:  #2e2e2e;
+$accent:      #c8b89a;
+$accent-dim:  rgba(200, 184, 154, 0.12);
+$accent-mid:  rgba(200, 184, 154, 0.25);
+$error:       #e05c5c;
+$error-dim:   rgba(224, 92, 92, 0.12);
+$highlight:   rgba(240, 237, 230, 0.05);
+$selected:    rgba(200, 184, 154, 0.18);
+$same-number: rgba(200, 184, 154, 0.10);
+
+$font:        'Inter', system-ui, sans-serif;
+$radius:      8px;
+$radius-lg:   14px;
+
+// ─── Reset ───────────────────────────────────────────────────────────────────
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+// ─── Base ────────────────────────────────────────────────────────────────────
+body {
+  font-family: $font;
+  background: $bg;
+  color: $fg;
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2.5rem 1rem 4rem;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 420px;
+}
+
+// ─── Header ──────────────────────────────────────────────────────────────────
+h1 {
+  font-size: 1.5rem;
+  font-weight: 300;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: $fg;
+}
+
+// ─── Status bar ──────────────────────────────────────────────────────────────
+#status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  font-size: 0.85rem;
+  color: $muted;
+  letter-spacing: 0.05em;
+}
+
+#timer {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.9rem;
+}
+
+// ─── Grid ────────────────────────────────────────────────────────────────────
+#grid {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1.5px solid $border-box;
+  border-radius: $radius;
+  overflow: hidden;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  font-weight: 400;
+  cursor: pointer;
+  user-select: none;
+  background: transparent;
+  color: $muted;
+  border-right: 1px solid $border;
+  border-bottom: 1px solid $border;
+  transition: background 0.1s ease;
+
+  &:nth-child(9n)   { border-right: none; }
+  &:nth-child(n+73) { border-bottom: none; }
+
+  // Thick box borders
+  &:nth-child(3n):not(:nth-child(9n))              { border-right: 1.5px solid $border-box; }
+  &:nth-child(n+19):nth-child(-n+27) { border-bottom: 1.5px solid $border-box; }
+  &:nth-child(n+46):nth-child(-n+54) { border-bottom: 1.5px solid $border-box; }
+
+  &.given {
+    color: $fg;
+    font-weight: 500;
+  }
+
+  &.highlighted {
+    background: $highlight;
+  }
+
+  &.selected {
+    background: $selected;
+    color: $accent;
+  }
+
+  &.same-number {
+    background: $same-number;
+  }
+
+  &.error {
+    color: $error;
+    background: $error-dim;
+  }
+}
+
+// ─── Numpad ──────────────────────────────────────────────────────────────────
+#numpad {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 6px;
+  width: 100%;
+}
+
+.num-btn {
+  aspect-ratio: 1;
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+  font-family: $font;
+  font-weight: 400;
+  color: $fg;
+  background: transparent;
+  border: 1px solid $border-box;
+  border-radius: $radius;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: $accent-dim;
+    border-color: $accent;
+    color: $accent;
+  }
+
+  &:active {
+    background: $accent-mid;
+  }
+}
+
+// ─── Controls ────────────────────────────────────────────────────────────────
+#controls {
+  display: flex;
+  gap: 0.75rem;
+
+  button {
+    padding: 0.5rem 1.25rem;
+    font-family: $font;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    color: $muted;
+    background: transparent;
+    border: 1px solid $border-box;
+    border-radius: $radius;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+      color: $fg;
+      border-color: $muted;
+    }
+  }
+}
+
+// ─── Overlay ─────────────────────────────────────────────────────────────────
+#overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+
+  &.hidden { display: none; }
+}
+
+#overlay-content {
+  background: #111;
+  border: 1px solid $border-box;
+  border-radius: $radius-lg;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 260px;
+
+  h2 {
+    font-size: 1.3rem;
+    font-weight: 400;
+    color: $fg;
+    letter-spacing: 0.05em;
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: $muted;
+  }
+}
+
+#overlay-btn {
+  margin-top: 0.5rem;
+  padding: 0.6rem 1.5rem;
+  font-family: $font;
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: $bg;
+  background: $accent;
+  border: none;
+  border-radius: $radius;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+
+  &:hover { opacity: 0.85; }
+}
+
+// ─── Responsive ──────────────────────────────────────────────────────────────
+@media (max-width: 480px) {
+  body {
+    padding: 1.5rem 0.75rem 3rem;
+  }
+
+  #app {
+    gap: 1rem;
+  }
+
+  .num-btn {
+    border-radius: 6px;
+  }
+}
+
+// ─── Accessibility ───────────────────────────────────────────────────────────
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+
+:focus-visible {
+  outline: 2px solid $accent;
+  outline-offset: 2px;
+}
