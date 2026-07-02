@@ -127,6 +127,13 @@ h1 {
   }
 }
 
+// ─── Pause ───────────────────────────────────────────────────────────────────
+#grid.paused {
+  filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+}
+
 // ─── Numpad ──────────────────────────────────────────────────────────────────
 #numpad {
   display: grid;

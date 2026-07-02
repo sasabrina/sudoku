@@ -7,6 +7,7 @@ export class UI {
   private selectedCol: number | null = null;
   private timerInterval: number | null = null;
   private seconds: number = 0;
+  private paused: boolean = false;
 
   private $grid = document.getElementById('grid')!;
   private $errorsDisplay = document.getElementById('errors-display')!;
@@ -112,8 +113,25 @@ export class UI {
     });
   }
 
-  private onCellClick(row: number, col: number) {
+  private togglePause() {
     if (this.game.status !== 'playing') return;
+    this.paused = !this.paused;
+
+    const $pauseBtn = document.getElementById('btn-pause')!;
+
+    if (this.paused) {
+      this.stopTimer();
+      this.$grid.classList.add('paused');
+      $pauseBtn.textContent = '▶';
+    } else {
+      this.startTimer();
+      this.$grid.classList.remove('paused');
+      $pauseBtn.textContent = '⏸';
+    }
+  }
+
+  private onCellClick(row: number, col: number) {
+    if (this.game.status !== 'playing' || this.paused) return;
     this.selectedRow = row;
     this.selectedCol = col;
     this.render();
@@ -133,6 +151,10 @@ export class UI {
       this.render();
     });
 
+    document.getElementById('btn-pause')!.addEventListener('click', () => {
+      this.togglePause();
+    });
+
     document.getElementById('btn-new-game')!.addEventListener('click', () => {
       this.newGame();
     });
@@ -145,7 +167,7 @@ export class UI {
 
   private bindKeyboard() {
     document.addEventListener('keydown', (e) => {
-      if (this.game.status !== 'playing') return;
+      if (this.game.status !== 'playing' || this.paused) return;
 
       if (/^[1-9]$/.test(e.key)) {
         this.enterNumber(Number(e.key));
