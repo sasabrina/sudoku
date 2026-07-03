@@ -147,18 +147,22 @@ export class UI {
     if (this.game.status !== "playing") return;
     this.paused = !this.paused;
 
+    const numBtns = document.querySelectorAll<HTMLButtonElement>(".num-btn");
+
     if (this.paused) {
       this.stopTimer();
       this.$grid.classList.add("paused");
       this.$pauseBtn.textContent = "▶️";
       this.$pauseBtn.setAttribute("aria-label", "Reanudar partida");
       this.$pauseBtn.setAttribute("aria-pressed", "true");
+      numBtns.forEach(btn => btn.disabled = true);
     } else {
       this.startTimer();
       this.$grid.classList.remove("paused");
       this.$pauseBtn.textContent = "⏸️";
       this.$pauseBtn.setAttribute("aria-label", "Pausar partida");
       this.$pauseBtn.setAttribute("aria-pressed", "false");
+      this.render(); // render re-evaluates which buttons should be disabled
     }
   }
 
